@@ -1,0 +1,416 @@
+namespace ArenaWeb.UserControls.Custom.CCV.Core
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Configuration;
+    using System.Collections;
+    using System.Text;
+    using System.Web;
+    using System.Web.Security;
+    using System.Web.UI;
+    using System.Web.UI.WebControls;
+    using System.Web.UI.WebControls.WebParts;
+    using System.Web.UI.HtmlControls;
+
+    using Arena.Core;
+    using Arena.DataLayer.Core;
+    using Arena.Enums;
+    using Arena.Exceptions;
+    using Arena.Portal;
+    using Arena.Security;
+    using Arena.SmallGroup;
+
+    public partial class PersonDetailHistory : PortalControl
+    {
+        #region Module Settings
+
+        [PageSetting("Event Detail Page", "The page that should be used to display event details.", false)]
+        public string EventDetailPageIDSetting { get { return Setting("EventDetailPageID", "", false); } }
+
+        [PageSetting("Group Registration Detail Page", "The page that should be used to display group registration information.", false)]
+        public string GroupRegistrationDetailPageIDSetting { get { return Setting("GroupRegistrationDetailPageID", "", false); } }
+
+        [PageSetting("Profile Detail Page", "The page that should be used to display profile details.", false)]
+        public string ProfileDetailPageIDSetting { get { return Setting("ProfileDetailPageID", "", false); } }
+
+        [PageSetting("Role Detail Page", "The page that should be used to display role details.", false)]
+        public string RoleDetailPageIDSetting { get { return Setting("RoleDetailPageID", "", false); } }
+
+        #endregion
+
+        #region Constants
+
+        #endregion
+
+        #region Private Variables
+
+        private Person Person = null;
+        private bool EditEnabled = false;
+        private bool ViewEnabled = false;
+
+        #endregion
+
+        #region Events
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            EditEnabled = CurrentModule.Permissions.Allowed(OperationType.Edit, CurrentUser);
+            ViewEnabled = CurrentModule.Permissions.Allowed(OperationType.View, CurrentUser);
+
+            LoadPerson();
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void LoadPerson()
+        {
+            if (Person == null)
+            {
+                int PersonID = -1;
+                Guid PersonGUID = Guid.Empty;
+                bool isMe = false;
+
+                string[] keys;
+                keys = Request.QueryString.AllKeys;
+                foreach (string key in keys)
+                {
+                    switch (key.ToUpper())
+                    {
+                        case "GUID":
+                            try { PersonGUID = new Guid(Request.QueryString.Get(key)); }
+                            catch { PersonGUID = Guid.Empty; }
+                            break;
+                        case "ME":
+                            isMe = true;
+                            break;
+                    }
+                }
+
+                if (PersonID != -1)
+                    Person = new Person(PersonID);
+                else if (PersonGUID != Guid.Empty)
+                    Person = new Person(PersonGUID);
+                else if (isMe)
+                {
+                    Person = CurrentPerson;
+                }
+
+                if (!Page.IsPostBack && Person != null && Person.PersonID != -1)
+                    BuildHistory();
+            }
+        }
+
+        private void BuildHistory()
+        {
+            phHistory.Controls.Clear();
+
+            BuildHistoryType(phHistory, new Lookup(SystemLookup.PersonHistoryType_PersonUpdates));
+
+            bool altColor = true;
+            int totalCommItems = 0;
+
+            CommunicationData data = new CommunicationData();
+            SqlDataReader rdr = data.GetCommunicationByPersonID(CurrentPortal.OrganizationID, Person.PersonID);
+            while (rdr.Read())
+            {
+                if (totalCommItems == 0)
+                    phHistory.Controls.Add(AddListHeading("Communications Sent", 3));
+
+                string historyText = string.Empty;
+
+                PortalPage urlPage = CurrentPortal.ChildPages.FindByModuleName("Mail Merge");
+                if (urlPage != null)
+                    historyText = string.Format(
+                        "<a href='default.aspx?page={0}&communicationid={1}'>Subject: {2}; From: {3}</a>",
+                        urlPage.PortalPageID.ToString(),
+                        rdr["communication_id"].ToString(),
+                        rdr["subject"].ToString(),
+                        rdr["sender"].ToString());
+                else
+                    historyText = string.Format("Subject: {2}; From: {3}", rdr["subject"].ToString(), rdr["sender"].ToString());
+
+                PersonHistory phComm = new PersonHistory();
+                phComm.CreatedBy = rdr["created_by"].ToString();
+                phComm.DateCreated = (DateTime)rdr["date_created"];
+                phComm.Text = historyText;
+                HtmlTableRow row = AddHistoryItem(phComm, altColor);
+                if (row != null)
+                {
+                    phHistory.Controls.Add(row);
+                    altColor = !altColor;
+                }
+                totalCommItems++;
+            }
+            rdr.Close();
+
+            foreach (Lookup historyType in new LookupType(SystemLookupType.PersonHistoryType).Values)
+                if (historyType.Guid.ToString() != SystemLookup.PersonHistoryType_User.ToString() && historyType.Guid.ToString() != SystemLookup.PersonHistoryType_PersonUpdates.ToString())
+                    BuildHistoryType(phHistory, historyType);
+        }
+
+        private int BuildHistoryType(PlaceHolder ph, Lookup type)
+        {
+            bool altColor = true;
+
+            PersonHistoryCollection history = Person.GetHistory(CurrentPortal.OrganizationID, CurrentUser.Identity.Name).FilterByType(type);
+            if (history.Count > 0)
+            {
+                if (type.Value.ToLower() != "user")
+                    ph.Controls.Add(AddListHeading(type.Value, 3));
+
+                foreach (PersonHistory item in history)
+                {
+                    string historyText = Utilities.replaceCRLF(item.Text);
+
+                    if (item.HistoryType.Guid.ToString() == SystemLookup.PersonHistoryType_SmallGroupMember.ToString())
+                    {
+                        Group group = new Group(item.HistoryQualifierID);
+                        if (group.GroupID != -1)
+                            historyText = string.Format("<a href='default.aspx?page={0}&group={1}'>{2}</a>",
+                                group.ClusterType.Category.GroupPageID.ToString(),
+                                item.HistoryQualifierID,
+                                Utilities.replaceCRLF(item.Text));
+                    }
+                    else if (item.HistoryType.Guid.ToString() == SystemLookup.PersonHistoryType_SmallGroupRegistration.ToString())
+                    {
+                        Arena.SmallGroup.Registration registration = new Arena.SmallGroup.Registration(item.HistoryQualifierID);
+                        if (registration.RegistrationID != -1)
+                            historyText = string.Format("<a href='default.aspx?page={0}&registration={1}'>{2}</a>",
+                                GroupRegistrationDetailPageIDSetting,
+                                item.HistoryQualifierID,
+                                Utilities.replaceCRLF(item.Text));
+                    }
+                    else if (item.HistoryType.Guid.ToString() == SystemLookup.PersonHistoryType_Security.ToString())
+                    {
+                        Role role = new Role(item.HistoryQualifierID);
+                        if (role.RoleID != -1)
+                            historyText = string.Format("<a href='default.aspx?page={0}&role={1}'>{2}</a>",
+                                RoleDetailPageIDSetting,
+                                item.HistoryQualifierID,
+                                Utilities.replaceCRLF(item.Text));
+                    }
+                    else if (item.HistoryType.Guid.ToString() == SystemLookup.PersonHistoryType_TagMember.ToString())
+                    {
+                        historyText = string.Empty;
+
+                        ProfileMember profileMember = new ProfileMember(item.HistoryQualifierID, Person);
+                        if (profileMember.ProfileID != -1)
+                        {
+                            Profile profile = new Profile(item.HistoryQualifierID);
+                            if (profile.ProfileID != -1 && (profile.ProfileType != ProfileType.Personal || profile.Owner.PersonID == CurrentPerson.PersonID))
+                            {
+                                string detailPage = string.Empty;
+                                if (profile.ProfileType == ProfileType.Event)
+                                    detailPage = ProfileDetailPageIDSetting;
+                                else
+                                    detailPage = EventDetailPageIDSetting;
+
+                                historyText = string.Format("<a href='default.aspx?page={0}&profile={1}&person={2}'>{3}</a>",
+                                    detailPage,
+                                    item.HistoryQualifierID,
+                                    Person.PersonID.ToString(),
+                                    Utilities.replaceCRLF(item.Text));
+                            }
+                        }
+                    }
+
+
+                    if (historyText != string.Empty)
+                    {
+                        item.Text = historyText;
+                        HtmlTableRow row = AddHistoryItem(item, altColor);
+                        if (row != null)
+                        {
+                            ph.Controls.Add(row);
+                            altColor = !altColor;
+                        }
+                    }
+                }
+            }
+            return history.Count;
+        }
+
+        private HtmlTableRow AddHistoryItem(PersonHistory personHistory, bool alternateColor)
+        {
+            if (!personHistory.PrivateFlag ||
+                (personHistory.CreatedBy == CurrentUser.Identity.Name) ||
+                CurrentUser.IsInRole("Arena Administrators"))
+            {
+                string authorName = personHistory.CreatedBy;
+                Person author = new Person(personHistory.CreatedBy);
+                if (author.PersonID != -1)
+                    authorName = author.FullName;
+
+                HtmlTableRow row = new HtmlTableRow();
+                if (alternateColor)
+                    row.BgColor = "#eeeeee";
+                else
+                    row.BgColor = "#ffffff";
+
+                HtmlTableCell cell = new HtmlTableCell();
+                cell.VAlign = "top";
+                cell.Align = "left";
+                //cell.NoWrap = true;
+                cell.Attributes.Add("class", "smallText");
+                cell.InnerHtml = personHistory.Text;
+                row.Cells.Add(cell);
+
+                cell = new HtmlTableCell();
+                cell.VAlign = "top";
+                cell.Align = "left";
+                cell.NoWrap = true;
+                cell.Style.Add("padding-left", "5px");
+                cell.Attributes.Add("class", "smallText");
+                cell.InnerHtml = personHistory.DateCreated.ToShortDateString() + " " + personHistory.DateCreated.ToShortTimeString();
+                row.Cells.Add(cell);
+
+                cell = new HtmlTableCell();
+                cell.VAlign = "top";
+                cell.Align = "left";
+                cell.NoWrap = true;
+                cell.Style.Add("padding-left", "5px");
+                cell.Attributes.Add("class", "smallText");
+                cell.InnerHtml = authorName;
+                row.Cells.Add(cell);
+
+
+                return row;
+            }
+            else
+                return null;
+        }
+
+        #region Table Creation Methods
+
+        private HtmlTable CreateListTable()
+        {
+            HtmlTable tbl = new HtmlTable();
+            tbl.Border = 0;
+            tbl.CellPadding = 1;
+            tbl.CellSpacing = 0;
+            tbl.Width = "100%";
+
+            return tbl;
+        }
+
+        private HtmlTableRow AddListHeading(string captionHeading, string valueHeading)
+        {
+            return AddListHeading(captionHeading, valueHeading, "left");
+        }
+
+        private HtmlTableRow AddListHeading(string captionHeading, string valueHeading, string col2Allign)
+        {
+            HtmlTableRow row;
+            HtmlTableCell cell;
+
+            row = new HtmlTableRow();
+
+            cell = new HtmlTableCell("th");
+            cell.VAlign = "middle";
+            cell.Align = "left";
+            cell.NoWrap = true;
+            cell.InnerHtml = captionHeading;
+            row.Cells.Add(cell);
+
+            if (valueHeading.Trim() != string.Empty)
+            {
+                cell = new HtmlTableCell("th");
+                cell.VAlign = "middle";
+                cell.Align = col2Allign;
+                cell.NoWrap = true;
+                cell.InnerHtml = valueHeading;
+                row.Cells.Add(cell);
+            }
+            else
+                cell.ColSpan = 2;
+
+            return row;
+        }
+
+        private HtmlTableRow AddListHeading(string captionHeading)
+        {
+            return AddListHeading(captionHeading, 2);
+        }
+
+        private HtmlTableRow AddListHeading(string captionHeading, int columns)
+        {
+            HtmlTableRow row;
+            HtmlTableCell cell;
+
+            row = new HtmlTableRow();
+
+            cell = new HtmlTableCell("th");
+            cell.ColSpan = columns;
+            cell.VAlign = "middle";
+            cell.Align = "left";
+            cell.NoWrap = true;
+            cell.InnerText = captionHeading;
+            row.Cells.Add(cell);
+
+            return row;
+        }
+
+        private HtmlTableRow AddListItem(PlaceHolder ph, string listCaption, string listValue)
+        {
+            HtmlTableRow row = AddListItem(listCaption, listValue, false);
+            if (row != null)
+                ph.Controls.Add(row);
+            return row;
+        }
+
+        private HtmlTableRow AddListItem(string listCaption, string listValue, bool createEmptyRow)
+        {
+            if (listValue.Trim() != string.Empty || createEmptyRow)
+            {
+                HtmlTableRow row = new HtmlTableRow();
+                HtmlTableCell cell = new HtmlTableCell();
+                cell.VAlign = "top";
+                cell.Align = "left";
+                cell.Attributes.Add("class", "formLabel");
+                if (listCaption.Trim() != string.Empty)
+                    cell.InnerHtml = listCaption + ":";
+                row.Cells.Add(cell);
+
+                cell = new HtmlTableCell();
+                cell.VAlign = "top";
+                cell.Align = "left";
+                cell.Style.Add("padding-left", "5px");
+                cell.Attributes.Add("class", "formItem");
+                cell.InnerHtml = listValue;
+                row.Cells.Add(cell);
+
+                return row;
+            }
+            else
+                return null;
+        }
+
+        private HtmlTableRow AddListItem(PlaceHolder ph, string listCaption)
+        {
+            HtmlTableRow row = AddListItem(listCaption);
+            ph.Controls.Add(row);
+            return row;
+        }
+
+        private HtmlTableRow AddListItem(string listCaption)
+        {
+            HtmlTableRow row = new HtmlTableRow();
+            HtmlTableCell cell = new HtmlTableCell();
+            cell.VAlign = "top";
+            cell.Align = "left";
+            cell.ColSpan = 2;
+            cell.Attributes.Add("class", "formLabel");
+            cell.InnerHtml = listCaption;
+            row.Cells.Add(cell);
+
+            return row;
+        }
+
+        #endregion
+
+        #endregion
+    }
+}
