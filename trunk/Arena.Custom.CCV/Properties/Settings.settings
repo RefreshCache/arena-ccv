@@ -1,0 +1,9 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Arena.Custom.CCV.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Arena_Custom_CCV_StrikeIronWS_SMSTextMessaging" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://ws.strikeiron.com/StrikeIron/globalsmspro2_5/SMSTextMessaging</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
