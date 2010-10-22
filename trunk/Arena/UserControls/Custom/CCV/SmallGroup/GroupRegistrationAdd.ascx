@@ -1,0 +1,2 @@
+<%@ Control Language="c#" Inherits="ArenaWeb.UserControls.Custom.CCV.SmallGroup.GroupRegistrationAdd" CodeFile="GroupRegistrationAdd.ascx.cs" %>
+<asp:PlaceHolder ID="phGroupDetails" runat="server" Visible="true"></asp:PlaceHolder>
