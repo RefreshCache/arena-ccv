@@ -31,6 +31,7 @@ namespace DocumentScanner
         private Arena.Organization.Organization organization = null;
         private Acquisition acquisition;
         private Device device = null;
+        private ImageCollection ScannedImages = new ImageCollection();
 
         PersonSearchForm personSearchForm = null;
 
@@ -51,64 +52,7 @@ namespace DocumentScanner
 
         private void Main_Load(object sender, EventArgs e)
         {
-            int organizationID = Int32.Parse(ArenaContext.Current.AppSettings["Organization"]);
-            organization = new Arena.Organization.Organization(organizationID);
-
-             // Load the scanner devices and set the default
-            this.acquisition = new Acquisition();
-            this.acquisition.AsynchronousException += new AsynchronousExceptionEventHandler(this.acquisition_AsynchronousException);
-            this.acquisition.AcquireFinished += new EventHandler(acquisition_AcquireFinished);
-            this.acquisition.ImageAcquired += new ImageAcquiredEventHandler(acquisition_ImageAcquired);
-            this.acquisition.AcquireCanceled += new EventHandler(acquisition_AcquireCanceled);
-            this.acquisition.DeviceEvent += new DeviceEventHandler(acquisition_DeviceEvent);
-
-            string defaultScanner = this.acquisition.Devices.Default.Identity.ProductName;
-            foreach (Device twainDevice in this.acquisition.Devices)
-            {
-                ToolStripMenuItem miDevice = new ToolStripMenuItem();
-                miDevice.Text = twainDevice.Identity.ProductName;
-                miDevice.Tag = twainDevice;
-                miScanner.DropDownItems.Add(miDevice);
-                if (twainDevice.Identity.ProductName == Properties.Settings.Default.DefaultScanner)
-                {
-                    this.device = twainDevice; 
-                    miDevice.Checked = true;
-                    defaultScanner = twainDevice.Identity.ProductName;
-                }
-            }
-
-            // Load document types and set default
-            DocumentTypeCollection docTypes = new DocumentTypeCollection();
-            docTypes.LoadByOrganizationID(organizationID);
-
-            int defaultDocType = Properties.Settings.Default.DefaultDocType;
-            foreach (AttributeGroup attrGroup in new AttributeGroupCollection(organizationID))
-                foreach (Arena.Core.Attribute attr in attrGroup.Attributes)
-                    if (attr.AttributeType == Arena.Enums.DataType.Document &&
-                        attr.TypeQualifier.Trim() != string.Empty)
-                    {
-                        try
-                        {
-                            DocumentType docType = new DocumentType(Int32.Parse(attr.TypeQualifier));
-                            if (defaultDocType == 0)
-                                defaultDocType = docType.DocumentTypeId;
-
-                            ToolStripMenuItem miDocument = new ToolStripMenuItem();
-                            miDocument.Text = docType.TypeName;
-                            miDocument.Tag = new myDocType(docType, attr.AttributeId);
-                            miDocument.Checked = (docType.DocumentTypeId == defaultDocType);
-                            miDocumentType.DropDownItems.Add(miDocument);
-                        }
-                        catch { }
-                    }
-
-            for (int i = 0; i < miPageSize.DropDownItems.Count; i++)
-                ((ToolStripMenuItem)miPageSize.DropDownItems[i]).Checked = (i == Properties.Settings.Default.DefaultPageSize);
-
-            for (int i = 0; i < miRotation.DropDownItems.Count; i++)
-                ((ToolStripMenuItem)miRotation.DropDownItems[i]).Checked = (i == Properties.Settings.Default.DefaultRotate);
-
-            UpdateScannerStatus();
+            RefreshMenu();
         }
 
         private void Main_FormClosing(object sender, FormClosingEventArgs e)
@@ -148,18 +92,17 @@ namespace DocumentScanner
                 case 2: bitmap.RotateFlip(RotateFlipType.Rotate180FlipNone); break;
                 case 3: bitmap.RotateFlip(RotateFlipType.Rotate270FlipNone); break;
             }
-            int page = docViewer.ThumbnailControl.Items.Count + 1;
+            int page = tViewer.Items.Count + 1;
 
             AtalaImage atalaImage = AtalaImage.FromBitmap(bitmap);
+            ScannedImages.Add(atalaImage);
 
-            // Crop whitespace
-            //MarginCropCommand marginCropCommand = new MarginCropCommand();
-            //marginCropCommand.Denoise = true;
-            //marginCropCommand.ApplyToAnyPixelFormat = true;
-            //MarginCropResults results = (MarginCropResults)marginCropCommand.Apply(atalaImage);
-            //AtalaImage newImage = results.Image;
+            Atalasoft.Imaging.WinControls.Thumbnail thumbnail = new Atalasoft.Imaging.WinControls.Thumbnail(atalaImage, "", "");
+            thumbnail.Selected = true;
 
-            docViewer.Add(atalaImage, "Page " + page.ToString(), "");
+            tViewer.Items.Add(thumbnail);
+
+            RefreshView(tViewer.Items.Count - 1);
         }
 
         void acquisition_AcquireFinished(object sender, EventArgs e)
@@ -199,38 +142,238 @@ namespace DocumentScanner
         {
             SetMenuChecked(miScanner, e.ClickedItem);
             this.device = (Device)e.ClickedItem.Tag;
-            UpdateScannerStatus();
+            UpdateStatus();
         }
 
         private void mi_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             SetMenuChecked((ToolStripMenuItem)sender, e.ClickedItem);
-            UpdateScannerStatus();
+            UpdateStatus();
+        }
+
+        private void miRefresh_Click(object sender, EventArgs e)
+        {
+            RefreshMenu();
+        }
+
+        private void miExit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
 
         private void miRotateRight_Click(object sender, EventArgs e)
         {
-            docViewer.ApplyCommand(new Atalasoft.Imaging.ImageProcessing.Transforms.RotateCommand(90));
-            docViewer.Refresh();
+            Rotate(90);
         }
 
         private void miRotateLeft_Click(object sender, EventArgs e)
         {
-            docViewer.ApplyCommand(new Atalasoft.Imaging.ImageProcessing.Transforms.RotateCommand(270));
-            docViewer.Refresh();
+            Rotate(270);
         }
 
         private void miImageDelete_Click(object sender, EventArgs e)
         {
-            docViewer.RemoveSelected();
-        }
+            for (int i = tViewer.Items.Count - 1; i >= 0; i--)
+                if (tViewer.Items[i].Selected)
+                {
+                    tViewer.Items.RemoveAt(i);
+                    ScannedImages.RemoveAt(i);
+                }
 
+            RefreshView();
+        }
+        
         #endregion
 
         #region Toolbar Events
 
-        private void btnScan_Click(object sender, EventArgs e)
+        private void picScan_MouseDown(object sender, MouseEventArgs e)
         {
+            picScan.Image = Properties.Resources.scan_down;
+        }
+
+        private void picScan_MouseUp(object sender, MouseEventArgs e)
+        {
+            picScan.Image = Properties.Resources.scan_up;
+            picScan.Refresh();
+            Application.DoEvents();
+            ScanDocument();
+        }
+
+        private void picScan_MouseLeave(object sender, EventArgs e)
+        {
+            picScan.Image = Properties.Resources.scan_up;
+        }
+
+        private void picAttach_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (ScannedImages.Count > 0)
+                picAttach.Image = Properties.Resources.attach_down;
+        }
+
+        private void picAttach_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (ScannedImages.Count > 0)
+            {
+                picAttach.Image = Properties.Resources.attach_up;
+                picAttach.Refresh();
+                Application.DoEvents();
+                AttachDocument();
+            }
+            else
+                picAttach.Image = Properties.Resources.attach_disabled;
+        }
+
+        private void picAttach_MouseLeave(object sender, EventArgs e)
+        {
+            if (ScannedImages.Count > 0)
+                picAttach.Image = Properties.Resources.attach_up;
+            else
+                picAttach.Image = Properties.Resources.attach_disabled;
+        }
+
+        #endregion
+
+        #region Rotation Events
+
+        private void picONormal_Click(object sender, EventArgs e)
+        {
+            SetMenuChecked(miRotation, miRotation.DropDownItems[0]);
+            UpdateStatus();
+        }
+
+        private void picO90_Click(object sender, EventArgs e)
+        {
+            SetMenuChecked(miRotation, miRotation.DropDownItems[1]);
+            UpdateStatus();
+        }
+
+        private void picO270_Click(object sender, EventArgs e)
+        {
+            SetMenuChecked(miRotation, miRotation.DropDownItems[3]);
+            UpdateStatus();
+        }
+
+        private void picO180_Click(object sender, EventArgs e)
+        {
+            SetMenuChecked(miRotation, miRotation.DropDownItems[2]);
+            UpdateStatus();
+        }
+
+
+        private void picRotateRight_Click(object sender, EventArgs e)
+        {
+            Rotate(90);
+        }
+
+        private void picRotateLeft_Click(object sender, EventArgs e)
+        {
+            Rotate(270);
+        }
+
+        #endregion
+
+        private void tViewer_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RefreshView();
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void RefreshMenu()
+        {
+            try
+            {
+                int organizationID = Int32.Parse(ArenaContext.Current.AppSettings["Organization"]);
+                organization = new Arena.Organization.Organization(organizationID);
+
+                // Load the scanner devices and set the default
+                this.acquisition = new Acquisition();
+
+                if (this.acquisition.Devices.Count <= 0)
+                {
+                    MessageBox.Show("There were not any scanners found.  This application requires a scanner.", "No Scanner", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    Application.Exit();
+                }
+
+                this.acquisition.AsynchronousException += new AsynchronousExceptionEventHandler(this.acquisition_AsynchronousException);
+                this.acquisition.AcquireFinished += new EventHandler(acquisition_AcquireFinished);
+                this.acquisition.ImageAcquired += new ImageAcquiredEventHandler(acquisition_ImageAcquired);
+                this.acquisition.AcquireCanceled += new EventHandler(acquisition_AcquireCanceled);
+                this.acquisition.DeviceEvent += new DeviceEventHandler(acquisition_DeviceEvent);
+
+                miScanner.DropDownItems.Clear();
+                foreach (Device twainDevice in this.acquisition.Devices)
+                {
+                    ToolStripMenuItem miDevice = new ToolStripMenuItem();
+                    miDevice.Text = twainDevice.Identity.ProductName;
+                    miDevice.Tag = twainDevice;
+                    miScanner.DropDownItems.Add(miDevice);
+                    if (twainDevice.Identity.ProductName == Properties.Settings.Default.DefaultScanner)
+                    {
+                        this.device = twainDevice;
+                        miDevice.Checked = true;
+                    }
+                }
+
+                if (this.device == null)
+                {
+                    this.device = this.acquisition.Devices.Default;
+                    foreach (ToolStripItem item in miScanner.DropDownItems)
+                        if (item.Text == this.device.Identity.ProductName)
+                        {
+                            ((ToolStripMenuItem)item).Checked = true;
+                            break;
+                        }
+                }
+
+                // Load document types and set default
+                miDocumentType.DropDownItems.Clear();
+
+                DocumentTypeCollection docTypes = new DocumentTypeCollection();
+                docTypes.LoadByOrganizationID(organizationID);
+
+                int defaultDocType = Properties.Settings.Default.DefaultDocType;
+                foreach (AttributeGroup attrGroup in new AttributeGroupCollection(organizationID))
+                    foreach (Arena.Core.Attribute attr in attrGroup.Attributes)
+                        if (attr.AttributeType == Arena.Enums.DataType.Document &&
+                            attr.TypeQualifier.Trim() != string.Empty)
+                        {
+                            try
+                            {
+                                DocumentType docType = new DocumentType(Int32.Parse(attr.TypeQualifier));
+                                if (defaultDocType == 0)
+                                    defaultDocType = docType.DocumentTypeId;
+
+                                ToolStripMenuItem miDocument = new ToolStripMenuItem();
+                                miDocument.Text = docType.TypeName;
+                                miDocument.Tag = new myDocType(docType, attr.AttributeId);
+                                miDocument.Checked = (docType.DocumentTypeId == defaultDocType);
+                                miDocumentType.DropDownItems.Add(miDocument);
+                            }
+                            catch { }
+                        }
+
+                for (int i = 0; i < miPageSize.DropDownItems.Count; i++)
+                    ((ToolStripMenuItem)miPageSize.DropDownItems[i]).Checked = (i == Properties.Settings.Default.DefaultPageSize);
+
+                for (int i = 0; i < miRotation.DropDownItems.Count; i++)
+                    ((ToolStripMenuItem)miRotation.DropDownItems[i]).Checked = (i == Properties.Settings.Default.DefaultRotate);
+
+                UpdateStatus();
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ScanDocument()
+        {
+            this.Cursor = Cursors.WaitCursor;
+
             if (device.TryOpen())
             {
                 try
@@ -387,14 +530,19 @@ namespace DocumentScanner
                 }
                 catch (Exception ex)
                 {
+                    this.Cursor = Cursors.Default;
                     device.Close();
                     MessageBox.Show(ex.Message, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+
+            this.Cursor = Cursors.Default;
         }
 
-        private void btnUpload_Click(object sender, EventArgs e)
+        private void AttachDocument()
         {
+
+
             Person person = null;
             using (personSearchForm = new PersonSearchForm())
             {
@@ -405,6 +553,8 @@ namespace DocumentScanner
 
             if (person != null)
             {
+                this.Cursor = Cursors.WaitCursor;
+
                 string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
 
                 myDocType docType = (myDocType)getCheckedMenuItem(miDocumentType).Tag;
@@ -432,7 +582,7 @@ namespace DocumentScanner
 
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        docViewer.Save(ms, pdf);
+                        ScannedImages.Save(ms, pdf, null);
                         blob.ByteArray = ms.ToArray();
                         ms.Close();
                     }
@@ -451,16 +601,28 @@ namespace DocumentScanner
                     pDoc.DocumentID = pa.IntValue;
                     pDoc.SaveRelationship(userName);
 
-                    docViewer.Clear();
+                    ScannedImages.Clear();
+                    tViewer.Items.Clear();
+                    RefreshView();
                 }
+
+                this.Cursor = Cursors.Default;
             }
+
         }
 
-        #endregion
+        private void Rotate(double angle)
+        {
+            RotateCommand rotate = new RotateCommand(angle);
 
-        #endregion
+            foreach (int i in tViewer.SelectedIndices)
+            {
+                ScannedImages[i] = rotate.Apply(ScannedImages[i]).Image;
+                tViewer.Items[i].Image = rotate.Apply(tViewer.Items[i].Image).Image;
+            }
 
-        #region Private Methods
+            RefreshView();
+        }
 
         private void SetMenuChecked(ToolStripMenuItem parentItem, ToolStripItem clickedItem)
         {
@@ -522,14 +684,63 @@ namespace DocumentScanner
             return selectedResolution;
         }
 
-        private void UpdateScannerStatus()
+        private void UpdateStatus()
         {
-            lblScannerStatus.Text = string.Format(
-                "Scanner: {0}\nDocument Type: {1}\nPage Size:{2}\nRotate:{3}",
-                getCheckedMenuItem(miScanner).Text,
-                getCheckedMenuItem(miDocumentType).Text,
-                getCheckedMenuItem(miPageSize).Text,
-                getCheckedMenuItem(miRotation).Text);
+            ToolStripMenuItem mi = getCheckedMenuItem(miScanner);
+            lblScanner.Text = mi != null ? mi.Text : "";
+
+            mi = getCheckedMenuItem(miDocumentType);
+            lblDocumentType.Text = mi != null ? string.Format("Document Type: {0}", mi.Text) : "";
+
+            mi = getCheckedMenuItem(miPageSize);
+            lblPageSize.Text = mi != null ? string.Format("Page Size:{0}", mi.Text) : "";
+
+            picONormal.Image = ((ToolStripMenuItem)miRotation.DropDownItems[0]).Checked ? Properties.Resources.o_normal_enabled : Properties.Resources.o_normal_disabled;
+            picO90.Image = ((ToolStripMenuItem)miRotation.DropDownItems[1]).Checked ? Properties.Resources.o_clock_enabled : Properties.Resources.o_clock_disabled;
+            picO180.Image = ((ToolStripMenuItem)miRotation.DropDownItems[2]).Checked ? Properties.Resources.o_180_enabled : Properties.Resources.o_180_disabled;
+            picO270.Image = ((ToolStripMenuItem)miRotation.DropDownItems[3]).Checked ? Properties.Resources.o_counter_enabled : Properties.Resources.o_counter_disabled;
+        }
+
+        private void RefreshView()
+        {
+            if (tViewer.SelectedIndices.Count() > 0)
+            {
+                foreach (int i in tViewer.SelectedIndices)
+                {
+                    RefreshView(i);
+                    break;
+                }
+
+                picAttach.Image = Properties.Resources.attach_up;
+            }
+            else
+            {
+                iViewer.Visible = false;
+                iViewer.Image = null;
+                tViewer.Refresh();
+                iViewer.Refresh();
+
+                picAttach.Image = Properties.Resources.attach_disabled;
+            }
+        }
+
+        private void RefreshView(int index)
+        {
+            if (index >= 0)
+            {
+                iViewer.Image = ScannedImages[index].ToBitmap();
+                iViewer.Visible = true;
+                picAttach.Image = Properties.Resources.attach_up;
+            }
+            else
+            {
+                iViewer.Visible = false;
+                iViewer.Image = null;
+                picAttach.Image = Properties.Resources.attach_disabled;
+            }
+
+            tViewer.Refresh();
+            iViewer.Refresh();
         }
 
         #endregion
