@@ -188,7 +188,7 @@ namespace DocumentScanner
             // 
             // pnlSelectedPerson
             // 
-            this.pnlSelectedPerson.BackColor = System.Drawing.Color.White;
+            this.pnlSelectedPerson.BackColor = System.Drawing.SystemColors.AppWorkspace;
             this.pnlSelectedPerson.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.pnlSelectedPerson.Controls.Add(this.btnCancelSelect);
             this.pnlSelectedPerson.Controls.Add(this.btnSelect);

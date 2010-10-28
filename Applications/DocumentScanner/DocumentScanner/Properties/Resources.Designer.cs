@@ -59,5 +59,138 @@ namespace DocumentScanner.Properties {
                 resourceCulture = value;
             }
         }
+        
+        internal static System.Drawing.Bitmap attach_disabled {
+            get {
+                object obj = ResourceManager.GetObject("attach-disabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap attach_down {
+            get {
+                object obj = ResourceManager.GetObject("attach-down", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap attach_up {
+            get {
+                object obj = ResourceManager.GetObject("attach-up", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap heading {
+            get {
+                object obj = ResourceManager.GetObject("heading", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap main_background {
+            get {
+                object obj = ResourceManager.GetObject("main-background", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap o_180_disabled {
+            get {
+                object obj = ResourceManager.GetObject("o-180-disabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap o_180_enabled {
+            get {
+                object obj = ResourceManager.GetObject("o-180-enabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap o_clock_disabled {
+            get {
+                object obj = ResourceManager.GetObject("o-clock-disabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap o_clock_enabled {
+            get {
+                object obj = ResourceManager.GetObject("o-clock-enabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap o_counter_disabled {
+            get {
+                object obj = ResourceManager.GetObject("o-counter-disabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap o_counter_enabled {
+            get {
+                object obj = ResourceManager.GetObject("o-counter-enabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap o_normal_disabled {
+            get {
+                object obj = ResourceManager.GetObject("o-normal-disabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap o_normal_enabled {
+            get {
+                object obj = ResourceManager.GetObject("o-normal-enabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap rotate_clock {
+            get {
+                object obj = ResourceManager.GetObject("rotate-clock", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap rotate_counter {
+            get {
+                object obj = ResourceManager.GetObject("rotate-counter", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap scan_disabled {
+            get {
+                object obj = ResourceManager.GetObject("scan-disabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap scan_down {
+            get {
+                object obj = ResourceManager.GetObject("scan-down", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap scan_up {
+            get {
+                object obj = ResourceManager.GetObject("scan-up", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap thumbnail_background {
+            get {
+                object obj = ResourceManager.GetObject("thumbnail-background", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

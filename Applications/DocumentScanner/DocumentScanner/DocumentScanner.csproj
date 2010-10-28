@@ -35,21 +35,34 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Atalasoft.dotImage, Version=9.0.2.43320, Culture=neutral, PublicKeyToken=2b02b46f7326f73b" />
+    <Reference Include="Atalasoft.dotImage, Version=9.0.2.43320, Culture=neutral, PublicKeyToken=2b02b46f7326f73b, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Licenses\DLLs\Atalasoft\Atalasoft.dotImage.dll</HintPath>
+    </Reference>
     <Reference Include="Atalasoft.dotImage.AdvancedDocClean, Version=9.0.2.43320, Culture=neutral, PublicKeyToken=2b02b46f7326f73b, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files\Atalasoft\DotImage 9.0\bin\4.0\x86\Atalasoft.dotImage.AdvancedDocClean.dll</HintPath>
+      <HintPath>..\..\..\Licenses\DLLs\Atalasoft\Atalasoft.dotImage.AdvancedDocClean.dll</HintPath>
     </Reference>
-    <Reference Include="Atalasoft.dotImage.Lib, Version=9.0.2.43320, Culture=neutral, PublicKeyToken=2b02b46f7326f73b" />
+    <Reference Include="Atalasoft.dotImage.Lib, Version=9.0.2.43320, Culture=neutral, PublicKeyToken=2b02b46f7326f73b, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Licenses\DLLs\Atalasoft\Atalasoft.dotImage.Lib.dll</HintPath>
+    </Reference>
     <Reference Include="Atalasoft.dotImage.Pdf, Version=9.0.2.43320, Culture=neutral, PublicKeyToken=2b02b46f7326f73b, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files\Atalasoft\DotImage 9.0\bin\4.0\x86\Atalasoft.dotImage.Pdf.dll</HintPath>
+      <HintPath>..\..\..\Licenses\DLLs\Atalasoft\Atalasoft.dotImage.Pdf.dll</HintPath>
     </Reference>
-    <Reference Include="Atalasoft.dotImage.WinControls, Version=9.0.2.43320, Culture=neutral, PublicKeyToken=2b02b46f7326f73b, processorArchitecture=x86" />
-    <Reference Include="Atalasoft.DotTwain">
-      <HintPath>..\..\..\..\..\Program Files\Atalasoft\DotImage 9.0\bin\4.0\x86\Atalasoft.DotTwain.dll</HintPath>
+    <Reference Include="Atalasoft.dotImage.WinControls, Version=9.0.2.43320, Culture=neutral, PublicKeyToken=2b02b46f7326f73b, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Licenses\DLLs\Atalasoft\Atalasoft.dotImage.WinControls.dll</HintPath>
     </Reference>
-    <Reference Include="Atalasoft.Shared, Version=3.0.0.4, Culture=neutral, PublicKeyToken=2b02b46f7326f73b" />
+    <Reference Include="Atalasoft.DotTwain, Version=9.0.2.43250, Culture=neutral, PublicKeyToken=2b02b46f7326f73b, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Licenses\DLLs\Atalasoft\Atalasoft.DotTwain.dll</HintPath>
+    </Reference>
+    <Reference Include="Atalasoft.Shared, Version=3.0.0.4, Culture=neutral, PublicKeyToken=2b02b46f7326f73b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Licenses\DLLs\Atalasoft\Atalasoft.Shared.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
@@ -93,7 +106,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -113,6 +128,63 @@
       <Project>{FF494B0D-AD3D-4B7D-9414-2C44A28B5018}</Project>
       <Name>Arena.WinControls</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\heading.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\thumbnail-background.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\main-background.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\attach-up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\attach-down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\scan-up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\attach-disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\scan-down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\scan-disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\o-normal-enabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\o-normal-disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\o-clock-enabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\o-clock-disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\o-counter-enabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\o-counter-disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\o-180-enabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\o-180-disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\rotate-clock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\rotate-counter.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
