@@ -85,6 +85,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Communications\GroupAttendanceReminder.cs" />
     <Compile Include="CustomActions\AssignRequesterAsWorker.cs" />
     <Compile Include="CustomActions\AssignUserAsWorker.cs" />
     <Compile Include="CustomActions\AssignFieldAsWorker.cs" />
