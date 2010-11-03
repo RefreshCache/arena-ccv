@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GroupAttendanceReminder.cs" />
     <Compile Include="ERALossNotification.cs" />
     <Compile Include="ProcessDataUpdateActions.cs" />
     <Compile Include="FirstTimeVisitAssignments.cs" />
