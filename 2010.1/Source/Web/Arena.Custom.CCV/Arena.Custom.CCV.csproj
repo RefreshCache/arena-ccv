@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{900E16C6-73C1-4F96-B9FE-93D7ABEEA1D4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Arena.Custom.CCV</RootNamespace>
+    <AssemblyName>Arena.Custom.CCV</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>RocketSvnScc</SccProvider>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release-64bit|AnyCPU' ">
+    <OutputPath>bin\Release-64bit\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Arena.Framework, Version=2010.2.100.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Arena\bin\Arena.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Arena.Portal.UI, Version=1.1.3960.13879, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Arena\bin\Arena.Portal.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Payflow_dotNET, Version=4.3.0.0, Culture=neutral, PublicKeyToken=14aa1e8d77f2a97c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Licenses\DLLs\Payflow_dotNET.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\Communications\GroupAttendanceReminder.cs" />
+    <Compile Include="CustomActions\AssignRequesterAsWorker.cs" />
+    <Compile Include="CustomActions\AssignUserAsWorker.cs" />
+    <Compile Include="CustomActions\AssignFieldAsWorker.cs" />
+    <Compile Include="CustomActions\ExecuteSQLProc.cs" />
+    <Compile Include="Core\AddressField.cs" />
+    <Compile Include="Core\ApplicantRejectionNotification.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\Communications\PotentialLossNotification.cs" />
+    <Compile Include="Core\FamilyExtensions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\JobApplicationNotification.cs" />
+    <Compile Include="Core\PersonExtensions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CustomActions\AssignAreaLeader.cs" />
+    <Compile Include="CustomActions\SetAreaFromRequester.cs" />
+    <Compile Include="DataLayer\Data\ActionData.cs" />
+    <Compile Include="DataLayer\Data\ActionSettingData.cs" />
+    <Compile Include="DataLayer\HumanResources\AccessAreaData.cs" />
+    <Compile Include="DataLayer\HumanResources\JobApplicantData.cs" />
+    <Compile Include="DataLayer\HumanResources\JobPostingData.cs" />
+    <Compile Include="DataLayer\HumanResources\LeaveHistoryData.cs" />
+    <Compile Include="DataLayer\HumanResources\SalaryHistoryData.cs" />
+    <Compile Include="DataLayer\HumanResources\StaffData.cs" />
+    <Compile Include="DataLayer\SmallGroup\GroupData.cs" />
+    <Compile Include="Data\Action.cs" />
+    <Compile Include="Data\ActionCollection.cs" />
+    <Compile Include="Data\ActionSetting.cs" />
+    <Compile Include="Data\ActionSettingCollection.cs" />
+    <Compile Include="Data\DataUpdate.cs" />
+    <Compile Include="Data\DataUpdateActions\PersonAttributeChange.cs" />
+    <Compile Include="Data\DataUpdateActions\DataUpdateAction.cs" />
+    <Compile Include="HumanResources\AccessArea.cs" />
+    <Compile Include="HumanResources\AccessAreaCollection.cs" />
+    <Compile Include="HumanResources\JobApplicant.cs" />
+    <Compile Include="HumanResources\JobPosting.cs" />
+    <Compile Include="HumanResources\LeaveHistory.cs" />
+    <Compile Include="HumanResources\LeaveHistoryCollection.cs" />
+    <Compile Include="HumanResources\SalaryHistory.cs" />
+    <Compile Include="HumanResources\SalaryHistoryCollection.cs" />
+    <Compile Include="HumanResources\Staff.cs" />
+    <Compile Include="HumanResources\StaffCollection.cs" />
+    <Compile Include="Phone\Asterisk.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ServerControls\GradeDropDownList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SmallGroup\GroupCollection.cs" />
+    <Compile Include="SmallGroup\GroupMemberLog.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Event\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
