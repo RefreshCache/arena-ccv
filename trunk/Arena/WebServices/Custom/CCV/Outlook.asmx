@@ -112,10 +112,10 @@ public class Outlook  : System.Web.Services.WebService {
                 if (primaryPerson != null)
                 {
                     // Save setting associating the selected person with the email address
-                    PersonSetting ps = new PersonSetting(currentPersonID, OrganizationID, "PreferredPersonBy" + key);
+                    PersonSetting ps = new PersonSetting(currentPersonID, OrganizationID, "PreferredPersonBy_" + key);
                     ps.PersonId = currentPersonID;
                     ps.OrganizationId = OrganizationID;
-                    ps.Key = "outlook_ws_" + key;
+                    ps.Key = "PreferredPersonBy_" + key;
                     ps.Value = primaryPerson.PersonID.ToString();
                     ps.Save();                    
                 }
@@ -127,7 +127,7 @@ public class Outlook  : System.Web.Services.WebService {
             {
                 // Look for previously saved setting associating the email with a specific person
                 int savedPersonID = 0;
-                PersonSetting ps = new PersonSetting(currentPersonID, OrganizationID, "PreferredPersonBy" + key);
+                PersonSetting ps = new PersonSetting(currentPersonID, OrganizationID, "PreferredPersonBy_" + key);
                 Int32.TryParse(ps.Value, out savedPersonID);
                 if (savedPersonID > 0)
                 {
