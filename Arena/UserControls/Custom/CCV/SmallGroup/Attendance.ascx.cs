@@ -51,7 +51,6 @@ namespace ArenaWeb.UserControls.Custom.CCV.SmallGroup
         protected void Page_Load(object sender, System.EventArgs e)
         {
             pnlMessage.Visible = false;
-            aAddPerson.Visible = MemberAddPageSetting != string.Empty;
 
             person = CurrentPerson;
 
