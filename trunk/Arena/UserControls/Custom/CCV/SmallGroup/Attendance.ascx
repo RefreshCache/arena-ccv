@@ -66,7 +66,7 @@
             </div>
             <div class="buttons">
                 <asp:LinkButton ID="btnSubmit" runat="server" CssClass="save" Text="Save Attendance" OnClick="btnSubmit_Click"></asp:LinkButton>
-                <a href="#" id="aAddPerson" runat="server" class="add-person" onclick="openAddWindow();">Add New Person to the Group</a> 
+                <a class="add-person" href="javascript:openAddWindow();">Add New Person to the Group</a> 
             </div>
             
             </asp:PlaceHolder>
