@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B2968361-8981-4EEB-B4FD-7786239B1E65}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DocumentScanner</RootNamespace>
+    <AssemblyName>DocumentScanner</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Arena.Framework">
+      <HintPath>..\..\..\..\Web\Arena\bin\Arena.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Atalasoft.dotImage, Version=9.0.2.43320, Culture=neutral, PublicKeyToken=2b02b46f7326f73b, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Licenses\DLLs\Atalasoft\Atalasoft.dotImage.dll</HintPath>
+    </Reference>
+    <Reference Include="Atalasoft.dotImage.AdvancedDocClean, Version=9.0.2.43320, Culture=neutral, PublicKeyToken=2b02b46f7326f73b, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Licenses\DLLs\Atalasoft\Atalasoft.dotImage.AdvancedDocClean.dll</HintPath>
+    </Reference>
+    <Reference Include="Atalasoft.dotImage.Lib, Version=9.0.2.43320, Culture=neutral, PublicKeyToken=2b02b46f7326f73b, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Licenses\DLLs\Atalasoft\Atalasoft.dotImage.Lib.dll</HintPath>
+    </Reference>
+    <Reference Include="Atalasoft.dotImage.Pdf, Version=9.0.2.43320, Culture=neutral, PublicKeyToken=2b02b46f7326f73b, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Licenses\DLLs\Atalasoft\Atalasoft.dotImage.Pdf.dll</HintPath>
+    </Reference>
+    <Reference Include="Atalasoft.dotImage.WinControls, Version=9.0.2.43320, Culture=neutral, PublicKeyToken=2b02b46f7326f73b, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Licenses\DLLs\Atalasoft\Atalasoft.dotImage.WinControls.dll</HintPath>
+    </Reference>
+    <Reference Include="Atalasoft.DotTwain, Version=9.0.2.43250, Culture=neutral, PublicKeyToken=2b02b46f7326f73b, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Licenses\DLLs\Atalasoft\Atalasoft.DotTwain.dll</HintPath>
+    </Reference>
+    <Reference Include="Atalasoft.Shared, Version=3.0.0.4, Culture=neutral, PublicKeyToken=2b02b46f7326f73b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Licenses\DLLs\Atalasoft\Atalasoft.Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main.Designer.cs">
+      <DependentUpon>Main.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PersonSearchForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PersonSearchForm.designer.cs">
+      <DependentUpon>PersonSearchForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Main.resx">
+      <DependentUpon>Main.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PersonSearchForm.resx">
+      <DependentUpon>PersonSearchForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\licenses.licx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\heading.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\thumbnail-background.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\main-background.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\attach-up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\attach-down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\scan-up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\attach-disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\scan-down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\scan-disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\o-normal-enabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\o-normal-disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\o-clock-enabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\o-clock-disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\o-counter-enabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\o-counter-disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\o-180-enabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\o-180-disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\rotate-clock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\rotate-counter.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
