@@ -34,6 +34,9 @@ namespace ArenaWeb.UserControls.Custom.CCV.SmallGroup
         [NumericSetting("Category", "The category ID of small group to display.", true)]
         public string CategorySetting { get { return Setting("Category", "", true); } }
 
+        [NumericSetting("Cluster Type Filter", "Filter category by specific cluster type ID.", false)]
+        public string ClusterTypeSetting { get { return Setting("ClusterType", "", false); } }
+
         [PageSetting("Registration Page", "Page to redirect user to when they want to register for a specific group.", true)]
         public string RegistrationPageIDSetting { get { return Setting("RegistrationPageID", "", true); } }
 
@@ -106,6 +109,7 @@ namespace ArenaWeb.UserControls.Custom.CCV.SmallGroup
 
         private Area Area = null;
         private Category category = null;
+        private int clusterTypeFilterID = -1;
 
         private double maxLatitude = double.MinValue;
         private double maxLongitude = double.MinValue;
@@ -133,6 +137,9 @@ namespace ArenaWeb.UserControls.Custom.CCV.SmallGroup
         protected void Page_Load(object sender, System.EventArgs e)
         {
             category = new Category(Int32.Parse(CategorySetting));
+            if (ClusterTypeSetting != string.Empty)
+                try { clusterTypeFilterID = Int32.Parse(ClusterTypeSetting); }
+            catch {}
 
             if (Area == null)
             {
@@ -318,7 +325,7 @@ namespace ArenaWeb.UserControls.Custom.CCV.SmallGroup
                 groups.LoadByArea(Area.AreaID, category.CategoryID);
                 foreach (Group group in groups)
                 {
-                    if (group.Active)
+                    if (group.Active && ( clusterTypeFilterID == -1 || group.ClusterTypeID == clusterTypeFilterID ))
                     {
                         if (Boolean.Parse(ShowFullGroupsSetting) == false)
                         {
