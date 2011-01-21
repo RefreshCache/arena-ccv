@@ -849,7 +849,7 @@ namespace Arena.Custom.CCV.PCO
                     dict.Add("photo-url", xPhotoUrl.Value);
 
                 // Contact Information
-                XElement xContactData = person.Root.Element("contact_data");
+                XElement xContactData = person.Root.Element("contact-data");
                 if (xContactData != null)
                 {
                     // Address
@@ -924,7 +924,7 @@ namespace Arena.Custom.CCV.PCO
             if (personDict.ContainsKey("photo-url") && personDict["photo-url"] != string.Empty)
                 personElement.Add(new XElement("photo-url", personDict["photo-url"]));
 
-            XElement contactElement = new XElement("contact_data");
+            XElement contactElement = new XElement("contact-data");
             personElement.Add(contactElement);
 
             XElement addressesElement = new XElement("addresses", new XAttribute("type", "array"));
@@ -1003,7 +1003,7 @@ namespace Arena.Custom.CCV.PCO
                 );
             }
 
-            XElement contactElement = new XElement("contact_data");
+            XElement contactElement = new XElement("contact-data");
             personElement.Add(contactElement);
 
             XElement addressesElement = new XElement("addresses", new XAttribute("type", "array"));
@@ -1137,22 +1137,28 @@ namespace Arena.Custom.CCV.PCO
                 }
             }
 
-            // Do not downgrade the pco permissions
-            if (key.ToLower() == "permissions" && PCOUpdateRequired)
+            if (key.ToLower() == "permissions")
             {
-                int oldIndex = 0;
-                int newIndex = 0;
-                string[] permissions = { "disabled", "scheduled viewer", "viewer", "scheduler", "editor", "administrator" };
-                for (int i = 0; i < permissions.Length; i++)
-                {
-                    if (permissions[i] == PCOCurrent.ToLower())
-                        oldIndex = i;
-                    if (permissions[i] == Value.ToLower())
-                        newIndex = i;
-                }
+                // Do not need to update Arena permissions
+                ArenaUpdateRequired = false;
 
-                if (oldIndex > newIndex)
-                    PCOUpdateRequired = false;
+                // Do not downgrade the pco permissions
+                if (PCOUpdateRequired)
+                {
+                    int oldIndex = 99;
+                    int newIndex = 0;
+                    string[] permissions = { "disabled", "scheduled viewer", "viewer", "scheduler", "editor", "administrator" };
+                    for (int i = 0; i < permissions.Length; i++)
+                    {
+                        if (permissions[i] == PCOCurrent.ToLower())
+                            oldIndex = i;
+                        if (permissions[i] == Value.ToLower())
+                            newIndex = i;
+                    }
+
+                    if (oldIndex >= newIndex)
+                        PCOUpdateRequired = false;
+                }
             }
         }
     }
